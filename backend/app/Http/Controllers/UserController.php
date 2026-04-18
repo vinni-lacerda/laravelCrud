@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -77,6 +78,16 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+       try{
+            $removed = User::destroy($id);
+            if(!$removed){
+               throw new Exception();
+            }
+            return response()->json(null, 204);
+        } catch(\Exception $ex) {
+            return response()->json([
+                'message' => 'Falha ao remover usuário'
+            ], 400);
+        }
     }
 }
