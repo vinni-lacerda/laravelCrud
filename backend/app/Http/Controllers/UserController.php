@@ -17,13 +17,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::all();
-        $currentPage = $request -> get('current_page') ?? 1;
+        $currentPage = $request -> input('current_page') ?? 1;
         $regsPerPage =3;
         $skip = ($currentPage -1) * $regsPerPage;
 
         $users = User::skip($skip)->take($regsPerPage)->orderByDesc('id')->get();
 
-        return response()->json($users, 200);
+        return response()->json($users->toResourceCollection(), 200);
     }
 
     /**
@@ -38,7 +38,7 @@ class UserController extends Controller
         $user -> password = Hash::make(123);
         $user->save();
 
-        return response()->json($user, 201);
+        return response()->json($user->toResource(), 201);
        } catch(\Exception $ex){
         return response() ->json([
             'message' => 'Falha ao inserir usuario!'
@@ -53,7 +53,7 @@ class UserController extends Controller
     {
         try{
             $users = User::findOrFail($id);
-            return response()->json($users, 200);
+            return response()->json($users->toResource(), 200);
         } catch (\Exception $ex){
             return response()->json([
                 'message' => 'Falha ao buscar usuario!'
