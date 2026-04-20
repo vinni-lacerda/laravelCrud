@@ -7,9 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -23,9 +20,25 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required",
-            "email" => "required|email|unique:users,email",
-            "date_of_birth" => "nullable|date|before:today"
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'email.required' => 'O e-mail é obrigatório.',
+            'email.email' => 'O e-mail deve ser um endereço válido.',
+            'email.unique' => 'Este e-mail já está cadastrado.',
+            'password.required' => 'A senha é obrigatória.',
+            'password.min' => 'A senha deve ter ao menos 8 caracteres.',
+            'password.confirmed' => 'A confirmação de senha não corresponde.',
+            'date_of_birth.date' => 'A data de nascimento deve ser uma data válida.',
+            'date_of_birth.before' => 'A data de nascimento deve ser anterior a hoje.',
         ];
     }
 }
