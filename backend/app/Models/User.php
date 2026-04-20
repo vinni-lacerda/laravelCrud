@@ -13,19 +13,19 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
         'date_of_birth',
     ];
 
-    protected array $hidden = [
+    protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'date_of_birth' => 'date',
