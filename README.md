@@ -68,7 +68,7 @@ O front-end estará disponível em: **http://localhost:5173** (ou porta indicada
 
 ---
 
-## �📚 Endpoints da API
+## 📚 Endpoints da API
 
 ### BASE URL
 
