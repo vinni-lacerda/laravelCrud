@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:8'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
         ];
     }
@@ -37,8 +37,8 @@ class UpdateUserRequest extends FormRequest
             'email.required' => 'O e-mail é obrigatório.',
             'email.email' => 'O e-mail deve ser um endereço válido.',
             'email.unique' => 'Este e-mail já está cadastrado.',
-            'password.min' => 'A senha deve ter ao menos 8 caracteres.',
-            'password.confirmed' => 'A confirmação de senha não corresponde.',
+            // 'password.min' => 'A senha deve ter ao menos 8 caracteres.',
+            // 'password.confirmed' => 'A confirmação de senha não corresponde.',
             'date_of_birth.date' => 'A data de nascimento deve ser uma data válida.',
             'date_of_birth.before' => 'A data de nascimento deve ser anterior a hoje.',
         ];
