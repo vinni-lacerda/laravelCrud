@@ -4,96 +4,76 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use Exception;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    use ApiResponse;
+
+    public function index(Request $request): JsonResponse
     {
-        $users = User::all();
-        $currentPage = $request -> input('current_page') ?? 1;
-        $regsPerPage =3;
-        $skip = ($currentPage -1) * $regsPerPage;
+        $perPage = $request->integer('per_page', 10);
 
-        $users = User::skip($skip)->take($regsPerPage)->orderByDesc('id')->get();
+        $users = User::orderByDesc('id')
+            ->paginate($perPage)
+            ->withQueryString();
 
-        return response()->json($users->toResourceCollection(), 200);
+        return $this->successResponse(
+            UserResource::collection($users),
+            'Usuários carregados com sucesso.',
+            200
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): JsonResponse
     {
-       $data = $request -> validated();
-       try{
-        $user = new User();
-        $user ->fill($data);
-        $user -> password = Hash::make(123);
-        $user->save();
+        $user = User::create($request->validated());
 
-        return response()->json($user->toResource(), 201);
-       } catch(\Exception $ex){
-        return response() ->json([
-            'message' => 'Falha ao inserir usuario!'
-        ], 400);
-       }
+        return $this->successResponse(
+            UserResource::make($user),
+            'Usuário criado com sucesso.',
+            201
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(User $user): JsonResponse
     {
-        try{
-            $users = User::findOrFail($id);
-            return response()->json($users->toResource(), 200);
-        } catch (\Exception $ex){
-            return response()->json([
-                'message' => 'Falha ao buscar usuario!'
-            ], 404);
+        return $this->successResponse(
+            UserResource::make($user),
+            'Usuário encontrado com sucesso.',
+            200
+        );
+    }
+
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
+    {
+        $data = $request->validated();
+
+        if (empty($data['password'])) {
+            unset($data['password']);
         }
+
+        $user->update($data);
+
+        return $this->successResponse(
+            UserResource::make($user),
+            'Usuário atualizado com sucesso.',
+            200
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateUserRequest $request, string $id)
+    public function destroy(User $user): JsonResponse
     {
-        $data = $request ->validated();
+        $user->delete();
 
-        try{
-            $user = User::findOrFail($id);
-            $user ->update($data);
-            return response()->json($user, 200);
-        } catch(\Exception $ex) {
-            return response()->json([
-                'message' => 'Falha ao atualizar usuário'
-            ], 400);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-       try{
-            $removed = User::destroy($id);
-            if(!$removed){
-               throw new Exception();
-            }
-            return response()->json(null, 204);
-        } catch(\Exception $ex) {
-            return response()->json([
-                'message' => 'Falha ao remover usuário'
-            ], 400);
-        }
+        return $this->successResponse(
+            null,
+            'Usuário removido com sucesso.',
+            204
+        );
     }
 }
