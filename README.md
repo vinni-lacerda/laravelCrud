@@ -50,7 +50,7 @@ A API estará disponível em: **http://localhost:8000/api**
 
 ---
 
-## �️ Front-end (React) - Interface Gráfica
+## 💻 Front-end (React) - Interface Gráfica
 
 Para testar a API através de uma interface gráfica, você pode executar o front-end React incluído no projeto:
 
