@@ -577,4 +577,4 @@ Este projeto está licenciado sob a [MIT License](https://opensource.org/license
 
 ---
 
-**Desenvolvido com ❤️ usando Laravel 13 e PHP 8.5**
+**Desenvolvido para consolidar fundamentos usando Laravel 13 e PHP 8.5**
